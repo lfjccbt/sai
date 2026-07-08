@@ -2,493 +2,404 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>LFJC · Examination Portal</title>
+    <!-- Font & icons (optional but clean) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             overflow: hidden;
             width: 100vw;
             height: 100vh;
-            background: #000;
+            background: #0b1219;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            color: #f0f4fc;
         }
-        
+
+        /* screens */
         .screen {
-            width: 100vw;
-            height: 100vh;
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
+            transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        
         .screen.active {
             opacity: 1;
             visibility: visible;
         }
-        
-        .screen-bg {
-            background: linear-gradient(135deg, #141E30 0%, #243B55 50%, #0F2027 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0 20px;
-            height: 100vh;
-        }
-        
-        .page-header {
-            width: 100%;
-            text-align: center;
-            padding: 55px 0;
-            z-index: 10;
-            flex-shrink: 0;
-        }
-        
-        .header-text {
-            font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #5D4037;
-            text-shadow: 
-                2px 2px 0 rgba(255, 255, 255, 0.7),
-                4px 4px 0 rgba(0, 0, 0, 0.2);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        
-        .sub-header {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #8B4513;
-            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-        }
-        
-        .image-container {
-            width: 85%;
-            max-width: 1000px;
-            height: 75vh;
-            min-height: 300px;
-            display: flex;
+
+        /* ---- LOCK SCREEN (combined) ---- */
+        .lock-screen {
+            background: radial-gradient(circle at 20% 30%, #1a2a3a, #0b1219 80%);
+            padding: 2rem 1.5rem;
             justify-content: center;
-            align-items: center;
-            margin: -100px auto 10px;
-            flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
+            gap: 1.5rem;
         }
-        
-        .page-image {
+        .lock-screen .brand {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .lock-screen .brand h1 {
+            font-weight: 600;
+            font-size: 2.4rem;
+            letter-spacing: 2px;
+            background: linear-gradient(145deg, #f6e9d7, #d4c5b2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        .lock-screen .brand span {
+            display: block;
+            font-weight: 400;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            color: #a0b8cc;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+            -webkit-text-fill-color: #a0b8cc;
+        }
+
+        .lock-image {
+            width: 82%;
+            max-width: 460px;
+            aspect-ratio: 16 / 10;
+            background: rgba(255,255,255,0.03);
+            border-radius: 32px;
+            box-shadow: 0 20px 48px -8px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lock-image img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
             display: block;
+            padding: 0.2rem;
         }
-        
-        .password-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 10px 0;
-            flex-shrink: 0;
-            min-height: 120px;
-            margin-top: -110px;
-            position: relative;
-        }
-        
-        .password-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+
+        .password-card {
             width: 100%;
             max-width: 420px;
-            padding: 0 20px;
+            background: rgba(20, 34, 48, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 2rem 1.8rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8);
+            transition: all 0.2s;
         }
-        
-        .password-box {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 25px 30px;
-            border-radius: 20px;
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.2),
-                inset 0 1px 20px rgba(255, 255, 255, 0.15);
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-        }
-        
-        .input-container {
+        .input-group {
             position: relative;
-            width: 100%;
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            border-radius: 60px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.2s;
         }
-        
-        .password-input {
-            width: 100%;
-            padding: 18px 50px 18px 25px;
-            font-size: 17px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 14px;
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            transition: all 0.2s ease;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            letter-spacing: 0.5px;
-            -webkit-appearance: none;
-            appearance: none;
+        .input-group:focus-within {
+            border-color: rgba(255,215,150,0.5);
+            box-shadow: 0 0 0 3px rgba(255,215,150,0.1);
         }
-        
-        .password-input:focus {
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
-        }
-        
-        .password-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 400;
-        }
-        
-        .input-icon {
+        .input-group i {
             position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 20px;
-            pointer-events: none;
+            left: 20px;
+            color: #8aa0b9;
+            font-size: 1.1rem;
         }
-        
-        .submit-btn {
-            background: linear-gradient(135deg, 
-                rgba(33, 150, 243, 0.8) 0%, 
-                rgba(21, 101, 192, 0.8) 100%);
-            color: white;
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
-            padding: 18px 30px;
-            font-size: 17px;
-            border-radius: 14px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        .input-group input {
             width: 100%;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .submit-btn:hover {
-            background: linear-gradient(135deg, 
-                rgba(33, 150, 243, 0.9) 0%, 
-                rgba(21, 101, 192, 0.9) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .main-interface {
-            z-index: 800;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        
-        .sections-overlay {
-            width: 100%;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 5;
-            padding: 10px;
-            overflow-y: auto;
-        }
-        
-        .columns-container {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            width: 100%;
-            max-width: 1400px;
-            padding: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .column {
-            flex: 0 1 450px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            justify-content: space-evenly;
-            min-height: 500px;
-        }
-        
-        .section-btn {
-            background: rgba(255, 253, 245, 0.85);
+            padding: 18px 20px 18px 54px;
+            background: transparent;
             border: none;
-            border-radius: 18px;
-            padding: 25px 10px;
-            font-size: 22px;
-            font-weight: 700;
-            color: #5D4037;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 253, 245, 0.3);
-            width: 100%;
-            text-align: center;
-            display: block;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-            position: relative;
-        }
-        
-        .section-btn.unlocked {
-            background: rgba(76, 175, 80, 0.85);
+            font-size: 1rem;
             color: white;
-            text-shadow: none;
+            font-weight: 450;
+            letter-spacing: 0.3px;
+            outline: none;
         }
-        
-        .section-btn.unlocked:hover {
-            background: rgba(76, 175, 80, 0.95);
+        .input-group input::placeholder {
+            color: rgba(255,255,255,0.35);
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
-        
-        .section-btn:active {
-            transform: scale(0.96);
+        .password-card .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
         }
-        
-        .lock-badge {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 18px;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 8px;
-            border-radius: 20px;
+        .btn-primary {
+            flex: 1;
+            background: linear-gradient(145deg, #e8c99b, #d6ad7a);
+            border: none;
+            border-radius: 60px;
+            padding: 16px 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1a262f;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
-        .column:nth-child(1) .section-btn {
-            border-right: 4px solid rgba(76, 175, 80, 0.4);
+        .btn-primary:hover {
+            transform: scale(1.01);
+            background: linear-gradient(145deg, #f0dcb0, #ddbc88);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
         }
-        
-        .column:nth-child(2) .section-btn {
-            border-right: 4px solid rgba(33, 150, 243, 0.4);
+        .btn-primary:active { transform: scale(0.97); }
+        .error-badge {
+            background: rgba(255, 90, 70, 0.15);
+            padding: 8px 18px;
+            border-radius: 60px;
+            color: #ff9a8a;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 6px;
+            border-left: 3px solid #ff6b5a;
+            backdrop-filter: blur(4px);
         }
-        
-        .global-copyright {
+        .error-badge i { margin-right: 6px; }
+
+        /* ---- MAIN DASHBOARD ---- */
+        .dashboard {
+            background: radial-gradient(circle at 70% 10%, #1d2c3f, #0b1219 90%);
+            padding: 0;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .dash-header {
+            width: 100%;
+            padding: 1.8rem 2rem 0.8rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .dash-header h2 {
+            font-weight: 500;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: #f2e5d4;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+        }
+        .dash-header h2 i { color: #dbbd94; margin-right: 8px; }
+        .dash-header .sub {
+            color: #8da1b5;
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .sections-scroll {
+            flex: 1;
+            width: 100%;
+            padding: 0.5rem 1.5rem 2rem;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            scrollbar-width: none;
+        }
+        .sections-scroll::-webkit-scrollbar { display: none; }
+
+        .section-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch;
+            gap: 1.2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+        .section-card {
+            background: rgba(255, 253, 245, 0.05);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 28px;
+            padding: 1.6rem 1.4rem;
+            min-width: 140px;
+            flex: 1 0 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+            color: #d6dce3;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border-right: 4px solid rgba(210, 180, 140, 0.2);
+        }
+        .section-card.unlocked {
+            background: rgba(80, 180, 120, 0.12);
+            border-color: rgba(140, 220, 170, 0.3);
+            border-right: 4px solid #7bcfa4;
+        }
+        .section-card.unlocked:hover {
+            background: rgba(80, 180, 120, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+        }
+        .section-card .code {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: #f0e4d0;
+        }
+        .section-card .badge {
+            font-size: 0.7rem;
+            background: rgba(140, 220, 170, 0.2);
+            padding: 4px 14px;
+            border-radius: 40px;
+            color: #b0e0c0;
+            border: 1px solid rgba(140, 220, 170, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-card.used {
+            display: none !important;
+        }
+        .section-card.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(0.8);
+        }
+
+        .time-lock-overlay {
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2.8rem 2.2rem;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255,200,150,0.1);
+            margin: 1rem auto;
+        }
+        .time-lock-overlay i {
+            font-size: 3.2rem;
+            color: #d4a373;
+            margin-bottom: 0.5rem;
+        }
+        .time-lock-overlay h3 {
+            font-weight: 400;
+            color: #e8dccc;
+            letter-spacing: 1px;
+            font-size: 1.6rem;
+        }
+        .time-lock-overlay p {
+            color: #8da7bf;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
+        }
+        .global-footer {
             position: fixed;
-            bottom: 10px;
+            bottom: 16px;
             left: 0;
             width: 100%;
             text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            z-index: 9999;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1.5px;
+            font-weight: 300;
+            z-index: 999;
             pointer-events: none;
         }
-        
-        .time-status {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            border: 3px solid #ff6b6b;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
-        .time-status h2 {
-            color: #ff6b6b;
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-        
-        .time-status p {
-            font-size: 18px;
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
 
-        .time-status .time-detail {
-            color: #ffd93d;
-            font-size: 16px;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+        /* responsive */
+        @media (max-width: 600px) {
+            .lock-screen .brand h1 { font-size: 1.8rem; }
+            .password-card { padding: 1.5rem 1.2rem; }
+            .section-card { min-width: 120px; flex: 1 0 120px; padding: 1.2rem 0.8rem; }
+            .section-card .code { font-size: 1.4rem; }
+            .dash-header h2 { font-size: 1.5rem; }
         }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
-            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        @media (max-width: 420px) {
+            .section-grid { gap: 0.8rem; }
+            .section-card { flex: 1 0 100px; }
         }
-        
-        #mainInterface .header-text {
-            color: #FF9800;
-            text-shadow: none;
-        }
-        
-        #mainInterface .sub-header {
-            color: #F57C00;
-            text-shadow: none;
-        }
-        
-        #mainInterface .page-header {
-            padding-bottom: 0px;
-            margin-bottom: -70px;
-        }
-        
-        #mainInterface .sections-overlay {
-            margin-top: -60px;
-            padding-top: 0;
-        }
-        
-        @media (max-width: 768px) {
-            .header-text { font-size: 2rem; }
-            .sub-header { font-size: 1rem; }
-            .image-container { height: 60vh; }
-            .columns-container { flex-direction: column; }
-            .column { max-width: 350px; min-height: auto; }
-        }
-        
-        @media (max-width: 480px) {
-            .header-text { font-size: 1.6rem; }
-            .image-container { height: 55vh; }
-        }
-        
-        ::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
-  
-    <div id="combinedScreen" class="combined-screen screen-bg screen active">
-        <div class="page-header">
-           
+
+    <!-- LOCK SCREEN -->
+    <div id="lockScreen" class="screen lock-screen active">
+        <div class="brand">
+            <h1>LFJC</h1>
+            <span>examination portal</span>
         </div>
-        
-        <div class="image-container">
-            <img src="https://i.ibb.co/MDKxfWzQ/1234.png" 
-                 alt="LFJC Image" 
-                 class="page-image"
-                 onerror="this.style.display='none'">
+        <div class="lock-image">
+            <img src="https://i.ibb.co/MDKxfWzQ/1234.png" alt="LFJC badge" onerror="this.style.display='none'">
         </div>
-        
-        <div class="password-section">
-            <div class="password-container">
-                <div id="errorMessage" style="color:#ffaa77; font-family:sans-serif; display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:12px;"></div>
-                <div class="password-box">
-                    <div class="input-container">
-                        <input type="password" id="passwordInput" class="password-input" placeholder="Enter access code" autocomplete="off">
-                        <span class="input-icon">🔒</span>
-                    </div>
-                    <button id="submitBtn" class="submit-btn">submit</button>
-                </div>
+        <div class="password-card">
+            <div id="errorMessage" class="error-badge" style="display:none;"><i class="fas fa-exclamation-circle"></i> <span id="errorText">Invalid</span></div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="passwordInput" placeholder="Access code" autocomplete="off">
             </div>
-        </div>
-    </div>
-    
-    <div id="mainInterface" class="main-interface screen">
-        <div class="page-header">
-            <div class="header-text">LFJC ONLINE EXAMINATION</div>
-            <div class="sub-header"></div>
-        </div>
-        <div class="sections-overlay">
-            <div id="timeStatus" class="time-status">
-                <h2>🔒 ALL EXAMS ARE LOCKED</h2>
-                <p>Exams are accessible only in the college computer lab</p>
-                <div class="time-detail" id="timeDetail">Checking time...</div>
-            </div>
-            <div class="columns-container" id="sectionsContainer">
-             
-                <div class="column">
-                    <div style="color: white; text-align: center; padding: 20px;">Loading...</div>
-                </div>
+            <div class="actions">
+                <button id="submitBtn" class="btn-primary"><i class="fas fa-arrow-right"></i> Unlock</button>
             </div>
         </div>
     </div>
 
-  
-    <div class="global-copyright">© LFJC 2026 | All Rights Reserved</div>
+    <!-- DASHBOARD -->
+    <div id="dashboardScreen" class="screen dashboard">
+        <div class="dash-header">
+            <h2><i class="fas fa-graduation-cap"></i> LFJC · Online</h2>
+            <div class="sub">examination sections</div>
+        </div>
+        <div class="sections-scroll">
+            <div id="timeStatus" class="time-lock-overlay" style="display: none;">
+                <i class="fas fa-clock"></i>
+                <h3>All exams locked</h3>
+                <p>Examinations are accessible only during scheduled hours.</p>
+            </div>
+            <div class="section-grid" id="sectionsContainer">
+                <!-- dynamic sections -->
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">© LFJC 2026 · All rights reserved</div>
 
     <script>
-  (function() {
-     
-    // FIXED: Proper time check function
-    function isExamTime() {
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTotalMinutes = currentHour * 60 + currentMinute;
-        const day = now.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
-        
-        // Allow access on ALL DAYS (Monday-Saturday) between 8 AM and 6 PM
-        // Sunday (day 0) is excluded
-        if (day === 0) {
-            return false; // No exams on Sunday
-        }
-        
-        // Check if time is between 8:00 AM (480) and 6:00 PM (1080)
-        return currentTotalMinutes >= 480 && currentTotalMinutes < 1080;
-    }
+    (function() {
+        "use strict";
 
-    // DEBUG: Log current time info
-    const now = new Date();
-    console.log('=== TIME CHECK DEBUG ===');
-    console.log('Current Date/Time:', now.toString());
-    console.log('Day of week (0=Sunday):', now.getDay());
-    console.log('Current Hour:', now.getHours());
-    console.log('Current Minute:', now.getMinutes());
-    console.log('Total minutes since midnight:', now.getHours() * 60 + now.getMinutes());
-    console.log('Is exam time?', isExamTime());
-    console.log('========================');
-
-       
+        // ---- CONFIG ----
+        const REGULAR_PASSWORD = "lfjc2025";
         const SECTION_URLS = {
             "1D": "https://lfjc1d.github.io/1d/",
             "1M": "https://lfjc1m.github.io/1M/",
@@ -499,172 +410,168 @@
             "2N": "https://lfjc2n.github.io/2n/",
             "2E": "https://lfjc2e.github.io/2e/"
         };
+        const SECTIONS = ['1D','1M','1N','1E','2D','2M','2N','2E'];
 
-        const REGULAR_PASSWORD = "lfjc2025";
-      
-
-        const combinedScreen = document.getElementById('combinedScreen');
-        const mainInterface = document.getElementById('mainInterface');
+        // ---- STATE ----
+        let usedClasses = new Set();
+        let currentScreen = 'lock'; // 'lock' or 'dashboard'
+        const lockScreen = document.getElementById('lockScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
         const passwordInput = document.getElementById('passwordInput');
         const submitBtn = document.getElementById('submitBtn');
         const errorMsg = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         const sectionsContainer = document.getElementById('sectionsContainer');
         const timeStatus = document.getElementById('timeStatus');
-        const timeDetail = document.getElementById('timeDetail');
 
-        let currentState = 'combined';
+        // ---- helpers ----
+        function isExamTime() {
+            const now = new Date();
+            const day = now.getDay();
+            const totalMin = now.getHours() * 60 + now.getMinutes();
+            if (day === 0) return false;
+            if (day === 6) return totalMin >= 480 && totalMin < 810;  // saturday 8:00-13:30
+            return totalMin >= 480 && totalMin < 1200;                 // mon-fri 8:00-16:20
+        }
 
-        function enterFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
+        function switchScreen(screenId) {
+            lockScreen.classList.remove('active');
+            dashboardScreen.classList.remove('active');
+            if (screenId === 'lock') {
+                lockScreen.classList.add('active');
+                currentScreen = 'lock';
+                setTimeout(() => passwordInput?.focus(), 80);
+            } else {
+                dashboardScreen.classList.add('active');
+                currentScreen = 'dashboard';
+                if (!isExamTime()) {
+                    timeStatus.style.display = 'block';
+                    sectionsContainer.innerHTML = '';
+                } else {
+                    timeStatus.style.display = 'none';
+                    renderSections();
+                }
             }
         }
 
-        function focusPassword() {
-            setTimeout(() => passwordInput?.focus(), 100);
-        }
-
-        function switchScreen(toScreen) {
-            combinedScreen.classList.remove('active');
-            mainInterface.classList.remove('active');
-            toScreen.classList.add('active');
-        }
-
-        function shakeBox() {
-            const box = document.querySelector('.password-box');
-            box?.style.setProperty('animation', 'shake 0.5s');
-            setTimeout(() => box?.style.removeProperty('animation'), 500);
-        }
-
-        function showError(msg) {
-            errorMsg.style.display = 'block';
-            errorMsg.textContent = msg;
-            setTimeout(() => errorMsg.style.display = 'none', 3500);
-        }
-
         function renderSections() {
-            const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
-            const column1 = sections.slice(0, 4);
-            const column2 = sections.slice(4, 8);
-
-            let html = `
-                <div class="column">
-                    ${column1.map(section => `
-                        <button class="section-btn unlocked" data-section="${section}">
-                            ${section}
-                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
-                        </button>
-                    `).join('')}
-                </div>
-                <div class="column">
-                    ${column2.map(section => `
-                        <button class="section-btn unlocked" data-section="${section}">
-                            ${section}
-                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
-                        </button>
-                    `).join('')}
-                </div>
-            `;
-
+            let html = '';
+            SECTIONS.forEach((sec) => {
+                const isUsed = usedClasses.has(sec);
+                const unlocked = !isUsed && isExamTime();
+                const disabled = isUsed || !isExamTime();
+                const badgeText = isUsed ? '' : (isExamTime() ? '● open' : '');
+                html += `
+                    <div class="section-card ${unlocked ? 'unlocked' : ''} ${isUsed ? 'used' : ''} ${!unlocked ? 'disabled' : ''}"
+                         data-section="${sec}" 
+                         style="${isUsed ? 'display:none;' : ''}">
+                        <div class="code">${sec}</div>
+                        ${badgeText ? `<div class="badge">${badgeText}</div>` : ''}
+                    </div>
+                `;
+            });
             sectionsContainer.innerHTML = html;
 
-            document.querySelectorAll('.section-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+            // attach events
+            document.querySelectorAll('.section-card:not(.used):not(.disabled)').forEach(card => {
+                card.addEventListener('click', function(e) {
                     const section = this.dataset.section;
                     const url = SECTION_URLS[section];
                     if (!url) {
-                        alert(`URL for section ${section} not configured`);
+                        alert('Section URL missing.');
                         return;
                     }
-
-                    this.style.transform = 'scale(0.96)';
-                    this.style.opacity = '0.8';
-
+                    usedClasses.add(section);
+                    // open in new tab
+                    window.open(url, '_blank');
+                    // remove card after a moment
                     setTimeout(() => {
-                        window.open(url, '_blank');
-                    }, 150);
-
-                    setTimeout(() => {
-                        this.style.transform = '';
-                        this.style.opacity = '';
-                    }, 300);
+                        renderSections();
+                    }, 180);
                 });
             });
         }
 
-        function checkTimeAndRender() {
-            switchScreen(mainInterface);
-            currentState = 'sections';
-            
-            const examTime = isExamTime();
-            
-            // Update time detail for debugging
-            if (timeDetail) {
-                const now = new Date();
-                timeDetail.textContent = `Current time: ${now.toLocaleTimeString()} | Day: ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()]} | Status: ${examTime ? '✅ ACCESS GRANTED' : '❌ ACCESS DENIED'}`;
-            }
-            
-            if (examTime) {
-                timeStatus.style.display = 'none';
-                renderSections();
-            } else {
-                timeStatus.style.display = 'block';
-                sectionsContainer.innerHTML = '';
-            }
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorMsg.style.display = 'block';
+            setTimeout(() => { errorMsg.style.display = 'none'; }, 3200);
         }
 
+        function shakePassword() {
+            const card = document.querySelector('.password-card');
+            card.style.transition = 'transform 0.08s';
+            card.style.transform = 'translateX(-6px)';
+            setTimeout(() => card.style.transform = 'translateX(6px)', 80);
+            setTimeout(() => card.style.transform = 'translateX(-4px)', 160);
+            setTimeout(() => card.style.transform = 'translateX(4px)', 240);
+            setTimeout(() => card.style.transform = 'translateX(0)', 320);
+        }
+
+        // ---- password check ----
         function checkPassword() {
             const pwd = passwordInput.value.trim();
             errorMsg.style.display = 'none';
-
             if (!pwd) {
-                showError('Please enter a password');
-                shakeBox();
-                focusPassword();
+                showError('Enter access code');
+                shakePassword();
+                passwordInput.value = '';
+                passwordInput.focus();
                 return;
             }
-
             if (pwd === REGULAR_PASSWORD) {
-                enterFullscreen();
-                checkTimeAndRender();
+                // fullscreen request
+                try { document.documentElement.requestFullscreen?.(); } catch(_) {}
+                switchScreen('dashboard');
                 passwordInput.value = '';
             } else {
-                showError('Incorrect password. Try again.');
+                showError('Incorrect code · try again');
                 passwordInput.value = '';
-                shakeBox();
-                focusPassword();
+                shakePassword();
+                passwordInput.focus();
             }
         }
 
+        // ---- events ----
         submitBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keypress', e => {
-            if (e.key === 'Enter') checkPassword();
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkPassword();
+            }
         });
 
-        document.addEventListener('keydown', e => {
-            if (e.key !== 'Escape') return;
-            e.preventDefault();
-
-            if (currentState === 'sections') {
-                switchScreen(combinedScreen);
-                currentState = 'combined';
+        // Escape: go back to lock screen from dashboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && currentScreen === 'dashboard') {
+                e.preventDefault();
+                switchScreen('lock');
                 passwordInput.value = '';
-                focusPassword();
+                setTimeout(() => passwordInput.focus(), 60);
             }
         });
 
+        // click on lock background → focus
+        lockScreen.addEventListener('click', (e) => {
+            if (e.target === lockScreen || e.target.closest('.lock-screen') && !e.target.closest('.password-card')) {
+                passwordInput.focus();
+            }
+        });
+
+        // on load: focus
         window.addEventListener('load', () => {
-            focusPassword();
+            setTimeout(() => passwordInput.focus(), 200);
         });
 
-        document.addEventListener('click', () => {
-            if (currentState === 'combined') {
-                enterFullscreen();
-                focusPassword();
-            }
-        });
+        // touch/click on dashboard could focus nothing, but we keep it.
+        // additional: if user clicks outside sections, no action.
 
-        errorMsg.style.display = 'none';
+        // Initial render (just in case)
+        // but we stay on lock screen until password.
+        // prefill usedClasses for demo? none.
+
+        // if you want to test without password, uncomment:
+        // switchScreen('dashboard');
     })();
     </script>
 </body>
