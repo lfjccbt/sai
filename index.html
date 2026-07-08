@@ -7,38 +7,59 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>LFJC · Examination Portal</title>
-    <!-- Font & icons (optional but clean) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            background: #0b1219;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            color: #f0f4fc;
+        :root {
+            --bg-primary: #0a0f16;
+            --bg-secondary: #111b26;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #f0f4fc;
+            --text-secondary: #8ba0b8;
+            --accent-gold: #d4a373;
+            --accent-gold-light: #e8c99b;
+            --accent-green: #5fcb8a;
+            --accent-red: #f28b82;
+            --shadow-heavy: 0 24px 64px -12px rgba(0, 0, 0, 0.8);
+            --radius-lg: 32px;
+            --radius-md: 20px;
+            --radius-sm: 12px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* screens */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== SCREENS ===== */
         .screen {
             position: fixed;
             inset: 0;
             width: 100%;
             height: 100%;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 24px;
             overflow: hidden;
         }
         .screen.active {
@@ -46,360 +67,465 @@
             visibility: visible;
         }
 
-        /* ---- LOCK SCREEN (combined) ---- */
+        /* ===== LOCK SCREEN ===== */
         .lock-screen {
-            background: radial-gradient(circle at 20% 30%, #1a2a3a, #0b1219 80%);
-            padding: 2rem 1.5rem;
-            justify-content: center;
-            gap: 1.5rem;
+            background: radial-gradient(ellipse at 30% 20%, #1a2d3f, #080e15 70%);
+            gap: 28px;
+            padding: 20px;
         }
-        .lock-screen .brand {
+
+        .lock-brand {
             text-align: center;
-            margin-bottom: 0.5rem;
+            animation: fadeUp 0.8s ease forwards;
         }
-        .lock-screen .brand h1 {
-            font-weight: 600;
-            font-size: 2.4rem;
-            letter-spacing: 2px;
-            background: linear-gradient(145deg, #f6e9d7, #d4c5b2);
+        .lock-brand .logo-icon {
+            font-size: 2.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .lock-brand h1 {
+            font-weight: 700;
+            font-size: 2.6rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #f6e9d7 0%, #c9b59e 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
-        .lock-screen .brand span {
-            display: block;
+        .lock-brand .subtitle {
             font-weight: 400;
-            letter-spacing: 3px;
-            font-size: 0.9rem;
-            color: #a0b8cc;
+            letter-spacing: 4px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            margin-top: 0.2rem;
-            -webkit-text-fill-color: #a0b8cc;
+            margin-top: 2px;
+            -webkit-text-fill-color: var(--text-secondary);
         }
 
-        .lock-image {
-            width: 82%;
-            max-width: 460px;
-            aspect-ratio: 16 / 10;
-            background: rgba(255,255,255,0.03);
-            border-radius: 32px;
-            box-shadow: 0 20px 48px -8px rgba(0,0,0,0.7);
+        .lock-image-wrap {
+            width: 80%;
+            max-width: 400px;
+            aspect-ratio: 16 / 9;
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
-            backdrop-filter: blur(2px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+            animation: fadeUp 0.9s ease 0.1s forwards;
+            opacity: 0;
         }
-        .lock-image img {
+        .lock-image-wrap img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: block;
-            padding: 0.2rem;
+            padding: 8px;
         }
 
-        .password-card {
+        .lock-card {
             width: 100%;
-            max-width: 420px;
-            background: rgba(20, 34, 48, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 40px;
-            padding: 2rem 1.8rem;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8);
-            transition: all 0.2s;
+            max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px 32px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+            animation: fadeUp 0.8s ease 0.2s forwards;
+            opacity: 0;
         }
-        .input-group {
+
+        .lock-card .input-wrap {
             position: relative;
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 60px;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: border-color 0.25s, box-shadow 0.25s;
         }
-        .input-group:focus-within {
-            border-color: rgba(255,215,150,0.5);
-            box-shadow: 0 0 0 3px rgba(255,215,150,0.1);
+        .lock-card .input-wrap:focus-within {
+            border-color: rgba(212, 163, 115, 0.5);
+            box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.08);
         }
-        .input-group i {
+        .lock-card .input-wrap i {
             position: absolute;
             left: 20px;
-            color: #8aa0b9;
-            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.25s;
         }
-        .input-group input {
+        .lock-card .input-wrap:focus-within i {
+            color: var(--accent-gold);
+        }
+        .lock-card .input-wrap input {
             width: 100%;
             padding: 18px 20px 18px 54px;
             background: transparent;
             border: none;
             font-size: 1rem;
-            color: white;
             font-weight: 450;
-            letter-spacing: 0.3px;
+            color: #fff;
             outline: none;
+            letter-spacing: 0.3px;
         }
-        .input-group input::placeholder {
-            color: rgba(255,255,255,0.35);
-            font-weight: 300;
-            letter-spacing: 0.5px;
+        .lock-card .input-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 350;
         }
-        .password-card .actions {
+
+        .lock-card .actions {
             display: flex;
             gap: 12px;
             margin-top: 20px;
         }
         .btn-primary {
             flex: 1;
-            background: linear-gradient(145deg, #e8c99b, #d6ad7a);
+            background: linear-gradient(145deg, var(--accent-gold-light), #c9a87c);
             border: none;
             border-radius: 60px;
-            padding: 16px 12px;
+            padding: 16px 18px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #1a262f;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            letter-spacing: 0.8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.25);
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            font-family: inherit;
         }
         .btn-primary:hover {
-            transform: scale(1.01);
-            background: linear-gradient(145deg, #f0dcb0, #ddbc88);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(212, 163, 115, 0.35);
         }
-        .btn-primary:active { transform: scale(0.97); }
-        .error-badge {
-            background: rgba(255, 90, 70, 0.15);
-            padding: 8px 18px;
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .error-toast {
+            background: rgba(242, 139, 130, 0.12);
+            padding: 10px 18px;
             border-radius: 60px;
-            color: #ff9a8a;
-            font-size: 0.85rem;
-            display: inline-block;
-            margin-bottom: 6px;
-            border-left: 3px solid #ff6b5a;
+            color: var(--accent-red);
+            font-size: 0.82rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(242, 139, 130, 0.15);
             backdrop-filter: blur(4px);
         }
-        .error-badge i { margin-right: 6px; }
+        .error-toast i {
+            font-size: 0.9rem;
+        }
 
-        /* ---- MAIN DASHBOARD ---- */
+        /* ===== DASHBOARD ===== */
         .dashboard {
-            background: radial-gradient(circle at 70% 10%, #1d2c3f, #0b1219 90%);
+            background: radial-gradient(ellipse at 70% 10%, #172837, #080e15 90%);
             padding: 0;
             justify-content: flex-start;
-            align-items: center;
-        }
-        .dash-header {
-            width: 100%;
-            padding: 1.8rem 2rem 0.8rem;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .dash-header h2 {
-            font-weight: 500;
-            font-size: 2rem;
-            letter-spacing: 1px;
-            color: #f2e5d4;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.6);
-        }
-        .dash-header h2 i { color: #dbbd94; margin-right: 8px; }
-        .dash-header .sub {
-            color: #8da1b5;
-            font-weight: 300;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
         }
 
-        .sections-scroll {
+        .dash-header {
+            width: 100%;
+            max-width: 1200px;
+            padding: 28px 32px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dash-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .dash-header .brand i {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+        }
+        .dash-header .brand h2 {
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: 0.5px;
+            color: #f2e5d4;
+        }
+        .dash-header .brand span {
+            font-weight: 300;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: block;
+            margin-top: -2px;
+        }
+
+        .dash-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--glass-bg);
+            padding: 8px 18px 8px 14px;
+            border-radius: 60px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(8px);
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .dash-status .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-green);
+            box-shadow: 0 0 12px rgba(95, 203, 138, 0.3);
+            animation: pulse-dot 2s infinite;
+        }
+        .dash-status .status-dot.locked {
+            background: var(--accent-red);
+            box-shadow: 0 0 12px rgba(242, 139, 130, 0.2);
+            animation: none;
+        }
+
+        .dash-body {
             flex: 1;
             width: 100%;
-            padding: 0.5rem 1.5rem 2rem;
+            max-width: 1200px;
+            padding: 8px 32px 32px;
             overflow-y: auto;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             scrollbar-width: none;
         }
-        .sections-scroll::-webkit-scrollbar { display: none; }
+        .dash-body::-webkit-scrollbar {
+            display: none;
+        }
 
         .section-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: stretch;
-            gap: 1.2rem;
-            max-width: 800px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
             width: 100%;
+            max-width: 900px;
         }
+
         .section-card {
-            background: rgba(255, 253, 245, 0.05);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 28px;
-            padding: 1.6rem 1.4rem;
-            min-width: 140px;
-            flex: 1 0 150px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: 0.2s;
-            color: #d6dce3;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            border-right: 4px solid rgba(210, 180, 140, 0.2);
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            cursor: default;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            min-height: 120px;
+            position: relative;
         }
         .section-card.unlocked {
-            background: rgba(80, 180, 120, 0.12);
-            border-color: rgba(140, 220, 170, 0.3);
-            border-right: 4px solid #7bcfa4;
+            cursor: pointer;
+            border-color: rgba(95, 203, 138, 0.15);
         }
         .section-card.unlocked:hover {
-            background: rgba(80, 180, 120, 0.2);
             transform: translateY(-4px);
-            box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            border-color: rgba(95, 203, 138, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .section-card.unlocked:active {
+            transform: scale(0.96);
         }
         .section-card .code {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1.8rem;
             letter-spacing: 2px;
             color: #f0e4d0;
         }
-        .section-card .badge {
-            font-size: 0.7rem;
-            background: rgba(140, 220, 170, 0.2);
-            padding: 4px 14px;
-            border-radius: 40px;
-            color: #b0e0c0;
-            border: 1px solid rgba(140, 220, 170, 0.15);
+        .section-card .meta {
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 3px 14px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .section-card .meta.open {
+            color: var(--accent-green);
+            border-color: rgba(95, 203, 138, 0.15);
         }
         .section-card.used {
             display: none !important;
         }
-        .section-card.disabled {
+        .section-card.locked-card {
             opacity: 0.3;
+            filter: grayscale(0.7);
             pointer-events: none;
-            filter: grayscale(0.8);
         }
 
-        .time-lock-overlay {
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 2.8rem 2.2rem;
+        .time-lock-msg {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
             max-width: 480px;
-            width: 90%;
+            width: 100%;
             text-align: center;
-            border: 1px solid rgba(255,200,150,0.1);
-            margin: 1rem auto;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
         }
-        .time-lock-overlay i {
-            font-size: 3.2rem;
-            color: #d4a373;
-            margin-bottom: 0.5rem;
+        .time-lock-msg i {
+            font-size: 3rem;
+            color: var(--accent-gold);
+            opacity: 0.6;
+            margin-bottom: 8px;
         }
-        .time-lock-overlay h3 {
-            font-weight: 400;
+        .time-lock-msg h3 {
+            font-weight: 500;
             color: #e8dccc;
-            letter-spacing: 1px;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
-        .time-lock-overlay p {
-            color: #8da7bf;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 1rem;
+        .time-lock-msg p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 16px;
         }
-        .global-footer {
+
+        .footer {
             position: fixed;
-            bottom: 16px;
+            bottom: 14px;
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 1.5px;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.12);
+            letter-spacing: 2px;
             font-weight: 300;
             z-index: 999;
             pointer-events: none;
         }
 
-        /* responsive */
-        @media (max-width: 600px) {
-            .lock-screen .brand h1 { font-size: 1.8rem; }
-            .password-card { padding: 1.5rem 1.2rem; }
-            .section-card { min-width: 120px; flex: 1 0 120px; padding: 1.2rem 0.8rem; }
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .lock-brand h1 { font-size: 2rem; }
+            .lock-card { padding: 20px 16px 24px; }
+            .dash-header { padding: 20px 16px 8px; flex-direction: column; align-items: stretch; }
+            .dash-header .brand h2 { font-size: 1.3rem; }
+            .dash-status { align-self: flex-start; font-size: 0.7rem; padding: 6px 14px; }
+            .dash-body { padding: 8px 16px 24px; }
+            .section-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+            .section-card { padding: 18px 12px; min-height: 100px; }
             .section-card .code { font-size: 1.4rem; }
-            .dash-header h2 { font-size: 1.5rem; }
+            .time-lock-msg { padding: 28px 20px; }
         }
         @media (max-width: 420px) {
-            .section-grid { gap: 0.8rem; }
-            .section-card { flex: 1 0 100px; }
+            .section-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .section-card { min-height: 80px; padding: 14px 8px; }
+            .section-card .code { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOCK SCREEN -->
+    <!-- ===== LOCK SCREEN ===== -->
     <div id="lockScreen" class="screen lock-screen active">
-        <div class="brand">
+        <div class="lock-brand">
+            <i class="fas fa-graduation-cap logo-icon"></i>
             <h1>LFJC</h1>
-            <span>examination portal</span>
+            <div class="subtitle">Examination Portal</div>
         </div>
-        <div class="lock-image">
-            <img src="https://i.ibb.co/MDKxfWzQ/1234.png" alt="LFJC badge" onerror="this.style.display='none'">
+        <div class="lock-image-wrap">
+            <img src="https://i.ibb.co/MDKxfWzQ/1234.png" alt="LFJC" onerror="this.style.display='none'">
         </div>
-        <div class="password-card">
-            <div id="errorMessage" class="error-badge" style="display:none;"><i class="fas fa-exclamation-circle"></i> <span id="errorText">Invalid</span></div>
-            <div class="input-group">
+        <div class="lock-card">
+            <div id="errorToast" class="error-toast">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">Invalid access code</span>
+            </div>
+            <div class="input-wrap">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="passwordInput" placeholder="Access code" autocomplete="off">
+                <input type="password" id="passwordInput" placeholder="Enter access code" autocomplete="off">
             </div>
             <div class="actions">
-                <button id="submitBtn" class="btn-primary"><i class="fas fa-arrow-right"></i> Unlock</button>
+                <button id="submitBtn" class="btn-primary">
+                    <i class="fas fa-arrow-right"></i> Unlock
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- DASHBOARD -->
+    <!-- ===== DASHBOARD ===== -->
     <div id="dashboardScreen" class="screen dashboard">
         <div class="dash-header">
-            <h2><i class="fas fa-graduation-cap"></i> LFJC · Online</h2>
-            <div class="sub">examination sections</div>
+            <div class="brand">
+                <i class="fas fa-graduation-cap"></i>
+                <div>
+                    <h2>LFJC · Online</h2>
+                    <span>Examination sections</span>
+                </div>
+            </div>
+            <div class="dash-status" id="statusBar">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking...</span>
+            </div>
         </div>
-        <div class="sections-scroll">
-            <div id="timeStatus" class="time-lock-overlay" style="display: none;">
+        <div class="dash-body">
+            <div id="timeLockMessage" class="time-lock-msg" style="display:none;">
                 <i class="fas fa-clock"></i>
-                <h3>All exams locked</h3>
-                <p>Examinations are accessible only during scheduled hours.</p>
+                <h3>All Examinations Locked</h3>
+                <p>Sections are accessible only during scheduled exam hours.<br>Please check back at the designated time.</p>
             </div>
-            <div class="section-grid" id="sectionsContainer">
-                <!-- dynamic sections -->
-            </div>
+            <div class="section-grid" id="sectionsContainer"></div>
         </div>
     </div>
 
-    <div class="global-footer">© LFJC 2026 · All rights reserved</div>
+    <div class="footer">© LFJC 2026 · All rights reserved</div>
 
     <script>
     (function() {
         "use strict";
 
-        // ---- CONFIG ----
-        const REGULAR_PASSWORD = "lfjc2025";
+        // ===== CONFIG =====
+        const PASSWORD = "lfjc2025";
         const SECTION_URLS = {
             "1D": "https://lfjc1d.github.io/1d/",
             "1M": "https://lfjc1m.github.io/1M/",
@@ -410,139 +536,166 @@
             "2N": "https://lfjc2n.github.io/2n/",
             "2E": "https://lfjc2e.github.io/2e/"
         };
-        const SECTIONS = ['1D','1M','1N','1E','2D','2M','2N','2E'];
+        const SECTIONS = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
 
-        // ---- STATE ----
-        let usedClasses = new Set();
-        let currentScreen = 'lock'; // 'lock' or 'dashboard'
+        // ===== STATE =====
+        let usedSections = new Set();
+        let currentScreen = 'lock';
+
+        // ===== DOM REFS =====
         const lockScreen = document.getElementById('lockScreen');
         const dashboardScreen = document.getElementById('dashboardScreen');
         const passwordInput = document.getElementById('passwordInput');
         const submitBtn = document.getElementById('submitBtn');
-        const errorMsg = document.getElementById('errorMessage');
+        const errorToast = document.getElementById('errorToast');
         const errorText = document.getElementById('errorText');
         const sectionsContainer = document.getElementById('sectionsContainer');
-        const timeStatus = document.getElementById('timeStatus');
+        const timeLockMsg = document.getElementById('timeLockMessage');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
 
-        // ---- helpers ----
+        // ===== HELPERS =====
         function isExamTime() {
             const now = new Date();
             const day = now.getDay();
             const totalMin = now.getHours() * 60 + now.getMinutes();
             if (day === 0) return false;
-            if (day === 6) return totalMin >= 480 && totalMin < 810;  // saturday 8:00-13:30
-            return totalMin >= 480 && totalMin < 1200;                 // mon-fri 8:00-16:20
+            if (day === 6) return totalMin >= 480 && totalMin < 810; // Sat 8:00–13:30
+            return totalMin >= 480 && totalMin < 1200; // Mon–Fri 8:00–16:20
         }
 
-        function switchScreen(screenId) {
-            lockScreen.classList.remove('active');
-            dashboardScreen.classList.remove('active');
-            if (screenId === 'lock') {
-                lockScreen.classList.add('active');
-                currentScreen = 'lock';
-                setTimeout(() => passwordInput?.focus(), 80);
+        function getExamStatus() {
+            return isExamTime() ? 'open' : 'locked';
+        }
+
+        function updateStatusBar() {
+            const status = getExamStatus();
+            if (status === 'open') {
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Exams available';
+                statusDot.style.background = '#5fcb8a';
+                statusDot.style.boxShadow = '0 0 12px rgba(95,203,138,0.3)';
             } else {
-                dashboardScreen.classList.add('active');
-                currentScreen = 'dashboard';
-                if (!isExamTime()) {
-                    timeStatus.style.display = 'block';
-                    sectionsContainer.innerHTML = '';
-                } else {
-                    timeStatus.style.display = 'none';
-                    renderSections();
-                }
+                statusDot.className = 'status-dot locked';
+                statusText.textContent = 'Exams locked';
+                statusDot.style.background = '#f28b82';
+                statusDot.style.boxShadow = '0 0 12px rgba(242,139,130,0.2)';
             }
         }
 
-        function renderSections() {
+        function switchScreen(screen) {
+            lockScreen.classList.remove('active');
+            dashboardScreen.classList.remove('active');
+            if (screen === 'lock') {
+                lockScreen.classList.add('active');
+                currentScreen = 'lock';
+                setTimeout(() => passwordInput.focus(), 120);
+            } else {
+                dashboardScreen.classList.add('active');
+                currentScreen = 'dashboard';
+                updateStatusBar();
+                renderDashboard();
+            }
+        }
+
+        function renderDashboard() {
+            const isOpen = isExamTime();
+            timeLockMsg.style.display = isOpen ? 'none' : 'block';
+
+            if (!isOpen) {
+                sectionsContainer.innerHTML = '';
+                return;
+            }
+
             let html = '';
-            SECTIONS.forEach((sec) => {
-                const isUsed = usedClasses.has(sec);
-                const unlocked = !isUsed && isExamTime();
-                const disabled = isUsed || !isExamTime();
-                const badgeText = isUsed ? '' : (isExamTime() ? '● open' : '');
+            SECTIONS.forEach(sec => {
+                const isUsed = usedSections.has(sec);
+                if (isUsed) return;
                 html += `
-                    <div class="section-card ${unlocked ? 'unlocked' : ''} ${isUsed ? 'used' : ''} ${!unlocked ? 'disabled' : ''}"
-                         data-section="${sec}" 
-                         style="${isUsed ? 'display:none;' : ''}">
+                    <div class="section-card unlocked" data-section="${sec}">
                         <div class="code">${sec}</div>
-                        ${badgeText ? `<div class="badge">${badgeText}</div>` : ''}
+                        <div class="meta open"><i class="fas fa-circle" style="font-size:0.4rem;margin-right:4px;color:#5fcb8a;"></i> available</div>
                     </div>
                 `;
             });
+
+            if (html === '') {
+                html = `<div style="grid-column:1/-1;text-align:center;color:var(--text-secondary);padding:40px 0;">
+                            <i class="fas fa-check-circle" style="font-size:2rem;color:var(--accent-green);display:block;margin-bottom:12px;"></i>
+                            All sections completed
+                        </div>`;
+            }
+
             sectionsContainer.innerHTML = html;
 
-            // attach events
-            document.querySelectorAll('.section-card:not(.used):not(.disabled)').forEach(card => {
+            // Attach events
+            document.querySelectorAll('.section-card.unlocked').forEach(card => {
                 card.addEventListener('click', function(e) {
                     const section = this.dataset.section;
                     const url = SECTION_URLS[section];
                     if (!url) {
-                        alert('Section URL missing.');
+                        alert('Section URL not configured.');
                         return;
                     }
-                    usedClasses.add(section);
-                    // open in new tab
+                    usedSections.add(section);
                     window.open(url, '_blank');
-                    // remove card after a moment
-                    setTimeout(() => {
-                        renderSections();
-                    }, 180);
+                    // Re-render after a moment
+                    setTimeout(renderDashboard, 200);
                 });
             });
         }
 
         function showError(msg) {
             errorText.textContent = msg;
-            errorMsg.style.display = 'block';
-            setTimeout(() => { errorMsg.style.display = 'none'; }, 3200);
+            errorToast.style.display = 'flex';
+            setTimeout(() => {
+                errorToast.style.display = 'none';
+            }, 3500);
         }
 
-        function shakePassword() {
-            const card = document.querySelector('.password-card');
-            card.style.transition = 'transform 0.08s';
-            card.style.transform = 'translateX(-6px)';
-            setTimeout(() => card.style.transform = 'translateX(6px)', 80);
-            setTimeout(() => card.style.transform = 'translateX(-4px)', 160);
-            setTimeout(() => card.style.transform = 'translateX(4px)', 240);
-            setTimeout(() => card.style.transform = 'translateX(0)', 320);
+        function shakeElement(el) {
+            el.classList.remove('shake');
+            void el.offsetWidth;
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 500);
         }
 
-        // ---- password check ----
-        function checkPassword() {
+        // ===== AUTH =====
+        function handleLogin() {
             const pwd = passwordInput.value.trim();
-            errorMsg.style.display = 'none';
+            errorToast.style.display = 'none';
+
             if (!pwd) {
-                showError('Enter access code');
-                shakePassword();
-                passwordInput.value = '';
+                showError('Please enter your access code');
+                shakeElement(lockScreen.querySelector('.lock-card'));
                 passwordInput.focus();
                 return;
             }
-            if (pwd === REGULAR_PASSWORD) {
-                // fullscreen request
-                try { document.documentElement.requestFullscreen?.(); } catch(_) {}
+
+            if (pwd === PASSWORD) {
+                // Request fullscreen
+                try { document.documentElement.requestFullscreen?.(); } catch (_) {}
                 switchScreen('dashboard');
                 passwordInput.value = '';
             } else {
-                showError('Incorrect code · try again');
+                showError('Incorrect access code. Please try again.');
                 passwordInput.value = '';
-                shakePassword();
+                shakeElement(lockScreen.querySelector('.lock-card'));
                 passwordInput.focus();
             }
         }
 
-        // ---- events ----
-        submitBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keydown', (e) => {
+        // ===== EVENTS =====
+        submitBtn.addEventListener('click', handleLogin);
+        passwordInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                checkPassword();
+                handleLogin();
             }
         });
 
-        // Escape: go back to lock screen from dashboard
-        document.addEventListener('keydown', (e) => {
+        // Escape → back to lock
+        document.addEventListener('keydown', e => {
             if (e.key === 'Escape' && currentScreen === 'dashboard') {
                 e.preventDefault();
                 switchScreen('lock');
@@ -551,26 +704,21 @@
             }
         });
 
-        // click on lock background → focus
-        lockScreen.addEventListener('click', (e) => {
-            if (e.target === lockScreen || e.target.closest('.lock-screen') && !e.target.closest('.password-card')) {
+        // Focus on load
+        window.addEventListener('load', () => {
+            setTimeout(() => passwordInput.focus(), 300);
+        });
+
+        // Click on lock background → focus input
+        lockScreen.addEventListener('click', e => {
+            if (e.target === lockScreen || e.target.closest('.lock-screen') && !e.target.closest('.lock-card')) {
                 passwordInput.focus();
             }
         });
 
-        // on load: focus
-        window.addEventListener('load', () => {
-            setTimeout(() => passwordInput.focus(), 200);
-        });
-
-        // touch/click on dashboard could focus nothing, but we keep it.
-        // additional: if user clicks outside sections, no action.
-
-        // Initial render (just in case)
-        // but we stay on lock screen until password.
-        // prefill usedClasses for demo? none.
-
-        // if you want to test without password, uncomment:
+        // ===== INIT =====
+        // Pre-fill usedSections for demo? none.
+        // If you want to test dashboard directly, uncomment:
         // switchScreen('dashboard');
     })();
     </script>
